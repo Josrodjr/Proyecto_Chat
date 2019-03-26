@@ -106,3 +106,9 @@ user:{
 }
 ```
 ### Goodbye (va a ser later bitch.)
+
+mis notas
+```
+cd mnt/c/Users/Josro/Documents/GitHub/Proyecto_Chat
+gcc -o server server.c
+```
