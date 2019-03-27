@@ -35,14 +35,16 @@ int main(int argc, char const * argv[]){
     listen(server_file_descriptor, 3);
 
     // 
-    new_socket = accept(server_file_descriptor, (struct sockaddr *) &address, (socklen_t*) &address_length);
+    while(1){
+      new_socket = accept(server_file_descriptor, (struct sockaddr *) &address, (socklen_t*) &address_length);
 
-    // leer lo que encontramos
-    value = read( new_socket , buffer, 1024); 
+      // leer lo que encontramos
+      value = read( new_socket , buffer, 1024); 
 
-    // Answer it works
-    char *funciona = "Conectado";
-    send(new_socket , funciona , strlen(funciona) , 0 ); 
-
+      // Answer it works
+      char *funciona = "Conectado";
+      send(new_socket , funciona , strlen(funciona) , 0 ); 
+    }
+    
     return 0;
 }
