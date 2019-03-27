@@ -110,5 +110,6 @@ user:{
 mis notas
 ```
 cd mnt/c/Users/Josro/Documents/GitHub/Proyecto_Chat
-gcc -o server server.c
+g++ -o server server.cpp
+sudo apt install nlohmann-json-dev
 ```
