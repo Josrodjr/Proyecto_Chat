@@ -6,7 +6,7 @@
 #include <netinet/in.h> 
 #include <string.h> 
 // Probar para JSON
-#include "json.h"
+#include "single_include/nlohmann/json.hpp"
 // Definitions
 #define PORT 8080
 
@@ -15,7 +15,6 @@ int main(int argc, char const * argv[]){
     struct sockaddr_in address; 
     int address_length = sizeof(address); 
     char buffer[1024] = {0}; 
-    // char *hello = "Hello from server"; 
 
     // Crear el file descriptor del socket
     server_file_descriptor = socket(AF_INET, SOCK_STREAM, 0);
