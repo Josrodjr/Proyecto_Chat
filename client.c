@@ -3,9 +3,14 @@
 #include <sys/socket.h> 
 #include <stdlib.h> 
 #include <netinet/in.h> 
+// intet_pton
+#include <arpa/inet.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 // Probar para JSON
-#include "single_include/nlohmann/json.hpp"
+#include "json.hpp"
 // Definiciones
 #define PORT 8080 
 
