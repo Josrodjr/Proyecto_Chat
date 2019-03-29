@@ -1,6 +1,0 @@
-{
-    "files.associations": {
-        "json.h": "c",
-        "json.hpp": "c"
-    }
-}

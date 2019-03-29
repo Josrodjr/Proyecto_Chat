@@ -14,7 +14,7 @@ int main(int argc, char const * argv[]){
     int server_file_descriptor, new_socket, value; 
     struct sockaddr_in address; 
     int address_length = sizeof(address); 
-    char buffer[1024] = {0}; 
+    char buffer[1024] = ""; 
 
     // Crear el file descriptor del socket
     server_file_descriptor = socket(AF_INET, SOCK_STREAM, 0);
@@ -32,19 +32,22 @@ int main(int argc, char const * argv[]){
     bind(server_file_descriptor, (struct sockaddr *) &address, sizeof(address));
 
     // oir en el puerto
-    listen(server_file_descriptor, 3);
+    listen(server_file_descriptor, 5);
 
     // 
     while(1){
       new_socket = accept(server_file_descriptor, (struct sockaddr *) &address, (socklen_t*) &address_length);
-
-      // leer lo que encontramos
-      value = read( new_socket , buffer, 1024); 
-
       // Answer it works
       char *funciona = "Conectado";
-      send(new_socket , funciona , strlen(funciona) , 0 ); 
+      write(new_socket , funciona , strlen(funciona)); 
+      int pid; 
+      if ((pid  = fork()) == 0){
+        // Si hay mensajes, imprimirlos
+        while(read(new_socket, buffer, 1024)> 0){
+          printf("Mensaje recibido \n%s\n", buffer);
+          std::fill_n(buffer, 1024, 0);
+        }
+      }
     }
-    
     return 0;
 }

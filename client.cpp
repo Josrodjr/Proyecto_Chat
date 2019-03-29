@@ -17,6 +17,7 @@ int main (int argc, char const *argv[]){
     int value; 
     struct sockaddr_in server_address; 
     char buffer[1024] = {0}; 
+    char message[1024] = {0};
 
     int sock = 0;
     sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -28,14 +29,23 @@ int main (int argc, char const *argv[]){
 
     inet_pton(AF_INET, "127.0.0.1", &server_address.sin_addr);
 
-    connect(sock, (struct sockaddr *)&server_address, sizeof(server_address));
-
-    while (1){
-      char *funciona_cliente = "Enviado"; 
-      send(sock , funciona_cliente , strlen(funciona_cliente) , 0 ); 
+    // Conexion al server
+    if (connect(sock, (struct sockaddr *)&server_address, sizeof(server_address))== 0){
       value = read( sock , buffer, 1024); 
-      printf("%s\n",buffer ); 
+      printf("%s\n",buffer );
+      std::fill_n(buffer, 1024, 0); 
+      while (1){      
+        printf("Ingrese un mensaje pls \n");
+        fgets(message, 1024, stdin);
+        write(sock , message , strlen(message));
+        std::fill_n(message, 1024, 0);
+
+        /*
+        while(value > 0){
+          printf("Mensaje recibido \n%s\n", buffer);
+          std::fill_n(buffer, 1024, 0);
+        }*/
+      }
     }
-    
     return 0;
 }
