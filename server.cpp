@@ -5,6 +5,7 @@
 #include <stdlib.h> 
 #include <netinet/in.h> 
 #include <string.h> 
+#include <pthread.h>
 // Probar para JSON
 #include "json.hpp"
 #include <iostream>
@@ -129,7 +130,7 @@ int main(int argc, char const * argv[]){
     while(1){
       new_socket = accept(server_file_descriptor, (struct sockaddr *) &address, (socklen_t*) &address_length);
       // Answer it works
-      char *funciona = "Conectado";
+      char *funciona = "Conectado, ingrese su nombre de usuario";
       write(new_socket , funciona , strlen(funciona)); 
       int pid; 
       if ((pid  = fork()) == 0){
