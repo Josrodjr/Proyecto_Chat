@@ -8,36 +8,99 @@
 // Probar para JSON
 #include "json.hpp"
 #include <iostream>
+#include <vector>
 // Definitions
 #define PORT 8080
 // Que implemetacion de json estamos usando
-using json = nlohmann::json;
-
+using json = nlohmann::json; 
+// Standard namespace
 using namespace std;
+// create an array of users GLOBAL SCOPE
+json registered_users = json::array();
+
+void show_users()
+{
+  // print everything in the array of users
+  for (int i = 0; i < registered_users.size(); i++) 
+  {
+    std::cout << registered_users[i] << endl;
+  }
+}
+
+void append_user(json user)
+{
+  // append the new user
+  registered_users.push_back(user);
+}
+
+int get_user(int search_id)
+{
+  for (int i = 0; i < registered_users.size(); i++)
+  {
+    if (registered_users[i]["id"] == search_id)
+    {
+      return registered_users[i]["id"];
+    }
+  }
+  // Not found
+  return 0;
+}
+
+vector<int> get_users(vector<int>search_users)
+{
+
+  vector<int>found_users;
+  // for each element in the search user prop 
+  for (int j = 0; j < search_users.size(); j++)
+  {
+    // for each element in the registered users DB array
+    for (int i = 0; i < registered_users.size(); i++)
+    {
+      if (registered_users[i]["id"] == search_users[j])
+      {
+        // append the found values
+        found_users.push_back(registered_users[i]["id"]);
+      }
+    }
+  }
+  return found_users;
+}
 
 int main(int argc, char const * argv[]){
 
     // crear un dummy json solo para pruebas
     json user;
-
     user["id"] = 999;
     user["username"] = "Pepega";
     user["status"] = 2;
     user["last_connected"] = "TIME_HERE";
 
-    std::cout << user["username"] << endl;
+    append_user(user);
 
-    // create an array of users
-    json registered_users = json::array();
-    // append the new user
-    registered_users.push_back(user);
-    // check the array
-    cout << registered_users.size() << endl;
-    // print everything in the array of users
-    for (int i = 0; i < registered_users.size(); i++) 
+    // crear un dummy json solo para pruebas
+    json user2;
+    user2["id"] = 998;
+    user2["username"] = "Pepega";
+    user2["status"] = 2;
+    user2["last_connected"] = "TIME_HERE";
+
+    append_user(user2);
+
+    show_users();
+
+    vector<int> test;
+    test.push_back(999);
+    test.push_back(998);
+
+    // cout << test[0] << test[1] << endl;
+
+    vector<int> result = get_users(test);
+    // cout << user_ids[0] << endl;
+    for(int i=0; i<result.size(); i++)
     {
-          std::cout << registered_users[i] << endl;
+      cout << result[i] << endl;
     }
+    // std::cout << user["username"] << endl;
 
     int server_file_descriptor, new_socket, value; 
     struct sockaddr_in address; 
