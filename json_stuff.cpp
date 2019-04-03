@@ -18,12 +18,20 @@ json connect(string usuario){
   return conexion;
 }
 
-json envMensaje(string contenido){
+// Agregar lista de ids
+json envMensaje(string contenido, string usuarios){
   json mensaje;
-  mensaje["codigo"] = 1;
+  mensaje["code"] = 1;
   mensaje["data"]["to"] = "halp";
   mensaje["data"]["message"] = contenido;
   return mensaje;
+}
+
+json getUser(string usuarios){
+  json users;
+  users["code"] = 3;
+  users["data"]["user"] = usuarios;
+  return users;
 }
 
 json cambio_estado(int id, int estado){
@@ -34,15 +42,45 @@ json cambio_estado(int id, int estado){
   return status;
 }
 
+json goodBye(){
+  json adios;
+  adios["code"] = 5;
+  adios["data"] = "";
+  return adios;
+}
+
 
 
 void codeHandler(json envio){
-  printf("halp Pls");
-  int codigo = envio["codigo"];
+  int codigo = envio["code"];
   printf("%d \n", codigo);
   switch (codigo){
-    case 0:
+    // Exito de Conexion
+    case 200:
       printf("Esta intentando conectar");
+      break;
+    
+    // Errores
+    case 500:
+      printf("s%", envio["data"]["error_message"]);
+      break;
+    
+    // Mensaje recibido 
+    case 201:
+      printf("s%:\n", envio["data"]["from"]);
+      printf("s%\n", envio["data"]["message"]);
+      break;
+
+    // Exito de Cambio de estado
+    case 204:
+      printf("Cambio exitoso");
+      break;
+    
+    // Usuario Recibido
+    case 203:
+      printf("User Recieved");
+      json usuarios;
+      usuarios = envio["data"]["users"];
       break;
   
     default:
