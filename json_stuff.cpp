@@ -7,26 +7,34 @@
 using json = nlohmann::json;
 using namespace std;
 
-json envMensaje(string contenido){
-  json mensaje;
-  mensaje["codigo"] = 1;
-  mensaje["data"]["to"] = "halp";
-  mensaje["data"]["message"] = contenido;
-  //cout << mensaje.dump() << endl;
-  //char resp[1024];
-  //strcpy(resp, mensaje.dump().c_str()); 
-  //cout << resp << endl;
-  return mensaje;
-}
+// Metodos para el cliente
 
 json connect(string usuario){
   json conexion;
-  conexion["codigo"] = 0;
+  conexion["code"] = 0;
   conexion["data"]["username"] = usuario;
   //char resp[1024];
   //strcpy(resp, conexion.dump().c_str());
   return conexion;
 }
+
+json envMensaje(string contenido){
+  json mensaje;
+  mensaje["codigo"] = 1;
+  mensaje["data"]["to"] = "halp";
+  mensaje["data"]["message"] = contenido;
+  return mensaje;
+}
+
+json cambio_estado(int id, int estado){
+  json status;
+  status["code"] = 4;
+  status["data"]["user"] = id;
+  status["data"]["new_status"] = estado;
+  return status;
+}
+
+
 
 void codeHandler(json envio){
   printf("halp Pls");
@@ -40,7 +48,5 @@ void codeHandler(json envio){
     default:
       break;
   }
-
-  
 }
 

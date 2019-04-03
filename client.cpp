@@ -16,9 +16,12 @@
 
 void *recibir(void *sock){
   char leer[1024];
+  json recibido;
   while(1){
     read(*(int*)sock, leer, 1024);
     printf("Mensaje recibido \n%s\n", leer);
+    recibido = json::parse(leer);
+    
     std::fill_n(leer, 1024, 0);
   }
   return NULL;
@@ -51,31 +54,42 @@ int main (int argc, char const *argv[]){
       std::fill_n(buffer, 1024, 0);
 
       // Pregunta de Nombre de Usuario
-      printf("Ingrese su nombre de usuario");
-      fgets(message, 1024, stdin);
-      strcpy(send, connect(message).dump().c_str());
+      strcpy(send, connect(argv[1]).dump().c_str());
       write(sock, send, strlen(send));
 
+      /*
+      read(sock, buffer, 1024);
+      json codigo = json::parse(buffer);
+      */
+      // TEMPORAL
+      json codigo;
+      codigo["code"] = 200;
+
+      // TERMINA TEMPORAL
 
       std::fill_n(message, 1024, 0);
       std::fill_n(buffer, 1024, 0);
       std::fill_n(send, 1024, 0);
 
-      if (pthread_create(&listen, NULL, recibir, &sock)){
-        fprintf(stderr, "Error creating thread\n");
-      }
+      if (codigo["code"] == 200){
 
-      while (1){
-        printf("Ingrese un mensaje pls \n");
-        fgets(message, 1024, stdin);
-        strcpy(send, envMensaje(message).dump().c_str());
-        cout << send << endl;
-        write(sock , send , strlen(send));
-        std::fill_n(message, 1024, 0);
-        std::fill_n(send, 1024, 0);
-      }
+        // Comienzo de la escucha de mensajes
+          if (pthread_create(&listen, NULL, recibir, &sock)){
+          fprintf(stderr, "Error creating thread\n");
+        }
 
-      pthread_join(listen, NULL);
+        // Escritura y comienzo del menu
+        while (1){
+          printf("Ingrese un mensaje pls \n");
+          fgets(message, 1024, stdin);
+          strcpy(send, envMensaje(message).dump().c_str());
+          cout << send << endl;
+          write(sock , send , strlen(send));
+          std::fill_n(message, 1024, 0);
+          std::fill_n(send, 1024, 0);
+        }
+        pthread_join(listen, NULL);
+      }
     }
     return 0;
 }

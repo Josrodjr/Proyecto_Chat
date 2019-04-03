@@ -168,7 +168,7 @@ int main(int argc, char const * argv[]){
     while(1){
       new_socket = accept(server_file_descriptor, (struct sockaddr *) &address, (socklen_t*) &address_length);
       // Answer it works
-      char *funciona = "Conectado, ingrese su nombre de usuario";
+      char *funciona = "Conectado";
       write(new_socket , funciona , strlen(funciona)); 
       int pid; 
       if ((pid  = fork()) == 0){
