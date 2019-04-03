@@ -61,7 +61,9 @@ int main (int argc, char const *argv[]){
       std::fill_n(buffer, 1024, 0);
       std::fill_n(send, 1024, 0);
 
-      if (pthread_create(&listen, NULL, recibir, &sock))
+      if (pthread_create(&listen, NULL, recibir, &sock)){
+        fprintf(stderr, "Error creating thread\n");
+      }
 
       while (1){
         printf("Ingrese un mensaje pls \n");
