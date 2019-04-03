@@ -108,36 +108,68 @@ void delete_user(int id)
   pthread_mutex_unlock(&mtx);
 }
 
+void rename_user(int id, std::string new_username)
+{
+  pthread_mutex_lock(&mtx);
+  registered_users[id]["username"] = new_username;
+  pthread_mutex_unlock(&mtx);
+}
+
 void *user_request_manager(void *user_id) 
 {
   // while((readBuff = read(cli->fd, buff, sizeof(buff)-1)) > 0)
   long u_id;
   u_id = (long)user_id;
-  cout << u_id << endl;
+  cout <<"User id: "<< u_id << endl;
+  int real_userid = u_id - 1;
+  cout << registered_users[real_userid] << endl;
+  // read del cliente
+  char buffer[1024] = ""; 
+  read(registered_users[real_userid]["file_descriptor"], buffer, 1024);
+  cout << "Se encontro" << buffer << endl;
+
+  // echarle el jsonify
+  json info = json::parse(buffer);
+  // se supone trae un code y un data
+  // cout << info["code"] << info["data"] << endl;
+  // Change the name of the generic Pepega User
+  if (info["code"] == 0)
+  {
+    cout << info["data"]["username"] << endl;
+    rename_user(real_userid, info["data"]["username"]);
+    // return sucess to the client
+    json succ;
+    succ["code"] = 200;
+    succ["data"]["user"]["id"] = real_userid;
+    succ["data"]["user"]["username"] = info["data"]["username"];
+    succ["data"]["user"]["status"] = 0;
+
+    write(registered_users[real_userid]["file_descriptor"], succ.dump().c_str(), succ.dump().length());
+  }
   pthread_exit(NULL);
 }
 
 int main(int argc, char const * argv[]){
 
     // crear un dummy json solo para pruebas
-    json user;
-    user["id"] = 999;
-    user["username"] = "Pepega";
-    user["status"] = 2;
-    user["last_connected"] = "TIME_HERE";
+    // json user;
+    // user["id"] = 999;
+    // user["username"] = "Pepega";
+    // user["status"] = 2;
+    // user["last_connected"] = "TIME_HERE";
 
-    append_user(user);
+    // append_user(user);
 
-    // crear un dummy json solo para pruebas
-    json user2;
-    user2["id"] = 998;
-    user2["username"] = "Pepega";
-    user2["status"] = 2;
-    user2["last_connected"] = "TIME_HERE";
+    // // crear un dummy json solo para pruebas
+    // json user2;
+    // user2["id"] = 998;
+    // user2["username"] = "Pepega";
+    // user2["status"] = 2;
+    // user2["last_connected"] = "TIME_HERE";
 
-    append_user(user2);
+    // append_user(user2);
 
-    show_users();
+    // show_users();
 
     // vector<int> test;
     // test.push_back(999);
@@ -149,8 +181,8 @@ int main(int argc, char const * argv[]){
     //   cout << result[i] << endl;
     // }
 
-    delete_user(999);
-    show_users();
+    // delete_user(999);
+    // show_users();
 
     int server_file_descriptor, new_socket, value; 
     struct sockaddr_in address; 
