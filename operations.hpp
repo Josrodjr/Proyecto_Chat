@@ -63,3 +63,49 @@ vector<int> get_users(vector<int>search_users, json::array* registered_users)
   }
   return found_users;
 }
+
+    // crear un dummy json solo para pruebas
+    // json user;
+    // user["id"] = 999;
+    // user["username"] = "Pepega";
+    // user["status"] = 2;
+    // user["last_connected"] = "TIME_HERE";
+
+    // append_user(user);
+
+    // // crear un dummy json solo para pruebas
+    // json user2;
+    // user2["id"] = 998;
+    // user2["username"] = "Pepega";
+    // user2["status"] = 2;
+    // user2["last_connected"] = "TIME_HERE";
+
+    // append_user(user2);
+
+    // show_users();
+
+    // vector<int> test;
+    // test.push_back(999);
+    // test.push_back(998);
+    // vector<int> result = get_users(test);
+    // cout << user_ids[0] << endl;
+    // for(int i=0; i<result.size(); i++)
+    // {
+    //   cout << result[i] << endl;
+    // }
+
+    // delete_user(999);
+    // show_users();
+
+    // el ripio del while
+
+          // if ((pid  = fork()) == 0){
+      //   // Si hay mensajes, imprimirlos
+      //   while(read(new_socket, buffer, 1024)> 0){
+      //     printf("Mensaje recibido \n%s\n", buffer);
+      //     std::fill_n(buffer, 1024, 0);
+
+      //     // aca en buffer recibo el string que convierto en json
+          
+      //   }
+      // }

@@ -131,58 +131,68 @@ void *user_request_manager(void *user_id)
   // echarle el jsonify
   json info = json::parse(buffer);
   // se supone trae un code y un data
-  // cout << info["code"] << info["data"] << endl;
+  // GENERIC return sucess to the client
+  json succ;
+  succ["code"] = 200;
+  succ["data"]["user"]["id"] = real_userid;
   // Change the name of the generic Pepega User
+  succ["data"]["user"]["username"] = info["data"]["username"];
+  succ["data"]["user"]["status"] = 0;
+
   if (info["code"] == 0)
   {
-    cout << info["data"]["username"] << endl;
+    // cout << info["data"]["username"] << endl;
     rename_user(real_userid, info["data"]["username"]);
-    // return sucess to the client
-    json succ;
-    succ["code"] = 200;
-    succ["data"]["user"]["id"] = real_userid;
-    succ["data"]["user"]["username"] = info["data"]["username"];
-    succ["data"]["user"]["status"] = 0;
-
+    // return success to client
     write(registered_users[real_userid]["file_descriptor"], succ.dump().c_str(), succ.dump().length());
   }
-  pthread_exit(NULL);
+  if (info["code"] == 1)
+  {
+    // create a geneeric message we'll send to EVERYONE
+    json message;
+    message["code"] = 201;
+    message["data"]["from"] = registered_users[real_userid]["username"];
+    message["data"]["message"] = info["data"]["message"]; 
+    // transform the destinataries into a vector of integers
+    vector<int> destinatarios = info["data"]["to"];
+    for(int i=0; i<destinatarios.size(); i++)
+    {
+      write(registered_users[destinatarios[i]]["file_descriptor"], message.dump().c_str(), message.dump().length());
+    }
+    // return success to client
+    write(registered_users[real_userid]["file_descriptor"], succ.dump().c_str(), succ.dump().length());
+  }
+  if (info["code"] == 3)
+  {
+    // transform the list provided to an actual list
+    vector<int> maybe_existing_users = info["data"]["user"];
+    vector<int> real_users = get_users(maybe_existing_users);
+    // return the users to the client
+    json answer;
+    answer["code"] = 203;
+    answer["data"]["users"] = real_users;
+    write(registered_users[real_userid]["file_descriptor"], answer.dump().c_str(), answer.dump().length());
+  }
+  if (info["code"] == 4)
+  {
+    // Change user status
+    // change the id doing the nnew params
+    change_state(info["data"]["id"], info["data"]["new_status"]);
+    // return sucess?
+    json success;
+    success["code"] = 204;
+    success["data"] = {};
+    write(registered_users[real_userid]["file_descriptor"], success.dump().c_str(), success.dump().length());
+  }
+  if (info["code"] == 5)
+  {
+    delete_user(real_userid);
+    pthread_exit(NULL);
+  }
+
 }
 
 int main(int argc, char const * argv[]){
-
-    // crear un dummy json solo para pruebas
-    // json user;
-    // user["id"] = 999;
-    // user["username"] = "Pepega";
-    // user["status"] = 2;
-    // user["last_connected"] = "TIME_HERE";
-
-    // append_user(user);
-
-    // // crear un dummy json solo para pruebas
-    // json user2;
-    // user2["id"] = 998;
-    // user2["username"] = "Pepega";
-    // user2["status"] = 2;
-    // user2["last_connected"] = "TIME_HERE";
-
-    // append_user(user2);
-
-    // show_users();
-
-    // vector<int> test;
-    // test.push_back(999);
-    // test.push_back(998);
-    // vector<int> result = get_users(test);
-    // cout << user_ids[0] << endl;
-    // for(int i=0; i<result.size(); i++)
-    // {
-    //   cout << result[i] << endl;
-    // }
-
-    // delete_user(999);
-    // show_users();
 
     int server_file_descriptor, new_socket, value; 
     struct sockaddr_in address; 
@@ -228,17 +238,8 @@ int main(int argc, char const * argv[]){
       // lanzar un user request manager thread  
       pthread_t thread;
       pthread_create(&thread, NULL, &user_request_manager, (void *) users_id);
+      pthread_detach(thread);
 
-      // if ((pid  = fork()) == 0){
-      //   // Si hay mensajes, imprimirlos
-      //   while(read(new_socket, buffer, 1024)> 0){
-      //     printf("Mensaje recibido \n%s\n", buffer);
-      //     std::fill_n(buffer, 1024, 0);
-
-      //     // aca en buffer recibo el string que convierto en json
-          
-      //   }
-      // }
     }
     return 0;
 }
