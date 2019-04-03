@@ -125,7 +125,8 @@ void *user_request_manager(void *user_id)
   cout << registered_users[real_userid] << endl;
   // read del cliente
   char buffer[1024] = ""; 
-  read(registered_users[real_userid]["file_descriptor"], buffer, 1024);
+  while (1){
+    read(registered_users[real_userid]["file_descriptor"], buffer, 1024);
   cout << "Se encontro" << buffer << endl;
 
   // echarle el jsonify
@@ -189,6 +190,9 @@ void *user_request_manager(void *user_id)
     delete_user(real_userid);
     pthread_exit(NULL);
   }
+  std::fill_n(buffer, 1024, 0);
+  }
+  
 
 }
 
@@ -223,7 +227,6 @@ int main(int argc, char const * argv[]){
       // Answer it works
       char *funciona = "Conectado";
       write(new_socket , funciona , strlen(funciona)); 
-      int pid; 
 
       // create a new json for the newly subscribed user
       json user;

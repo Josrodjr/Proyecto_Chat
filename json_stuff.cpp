@@ -22,7 +22,7 @@ json connect(string usuario){
 json envMensaje(string contenido, string usuarios){
   json mensaje;
   mensaje["code"] = 1;
-  mensaje["data"]["to"] = "halp";
+  mensaje["data"]["to"] = "";
   mensaje["data"]["message"] = contenido;
   return mensaje;
 }
@@ -57,7 +57,7 @@ void codeHandler(json envio){
   switch (codigo){
     // Exito de Conexion
     case 200:
-      printf("Esta intentando conectar");
+      //printf("Esta intentando conectar");
       break;
     
     // Errores
@@ -79,8 +79,6 @@ void codeHandler(json envio){
     // Usuario Recibido
     case 203:
       printf("User Recieved");
-      json usuarios;
-      usuarios = envio["data"]["users"];
       break;
   
     default:

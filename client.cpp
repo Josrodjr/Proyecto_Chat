@@ -23,6 +23,7 @@ void *recibir(void *sock){
     read(*(int*)sock, leer, 1024);
     printf("Mensaje recibido \n%s\n", leer);
     recibido = json::parse(leer);
+    printf("s%\n", recibido["code"]);
     codeHandler(recibido);
     std::fill_n(leer, 1024, 0);
   }
@@ -66,16 +67,16 @@ int main (int argc, char const *argv[]){
       strcpy(send, connect(argv[1]).dump().c_str());
       write(sock, send, strlen(send));
 
-      /*
       read(sock, buffer, 1024);
-      json codigo = json::parse(buffer);
-      */
-      // TEMPORAL
+      json codigo;
+      codigo = json::parse(buffer);
+      
+      /* TEMPORAL
       json codigo;
       codigo["code"] = 200;
       codigo["data"]["user"]["id"] = 0;
 
-      // TERMINA TEMPORAL
+      */ // TERMINA TEMPORAL
 
       std::fill_n(message, 1024, 0);
       std::fill_n(buffer, 1024, 0);
@@ -114,7 +115,7 @@ int main (int argc, char const *argv[]){
                 menu = 0;
               }
               strcpy(send, envMensaje(message, "").dump().c_str());
-              cout << send << endl;
+              //cout << send << endl;
               write(sock , send , strlen(send));
               std::fill_n(message, 1024, 0);
               std::fill_n(send, 1024, 0);
