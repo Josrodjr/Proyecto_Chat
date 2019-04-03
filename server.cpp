@@ -21,30 +21,32 @@ using namespace std;
 json registered_users = json::array();
 
 // get a mutex for the registered users
-pthread_mutex_t mtx;
+pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+// user ids starting in 1
+int users_id = 0;
 
 void show_users()
 {
   // print everything in the array of users
-  int pthread_mutex_lock(pthread_mutex_t *mtx);
+  pthread_mutex_lock(&mtx);
   for (int i = 0; i < registered_users.size(); i++) 
   {
     std::cout << registered_users[i] << endl;
   }
-  int pthread_mutex_unlock(pthread_mutex_t *mtx);
+  pthread_mutex_unlock(&mtx);
 }
 
 void append_user(json user)
 {
   // append the new user
-  int pthread_mutex_lock(pthread_mutex_t *mtx);
+  pthread_mutex_lock(&mtx);
   registered_users.push_back(user);
-  int pthread_mutex_unlock(pthread_mutex_t *mtx);
+  pthread_mutex_unlock(&mtx);
 }
 
 int get_user(int search_id)
 {
-  int pthread_mutex_lock(pthread_mutex_t *mtx);
+  pthread_mutex_lock(&mtx);
   for (int i = 0; i < registered_users.size(); i++)
   {
     if (registered_users[i]["id"] == search_id)
@@ -52,14 +54,14 @@ int get_user(int search_id)
       return registered_users[i]["id"];
     }
   }
-  int pthread_mutex_unlock(pthread_mutex_t *mtx);
+  pthread_mutex_unlock(&mtx);
   // Not found
   return 0;
 }
 
 vector<int> get_users(vector<int>search_users)
 {
-  int pthread_mutex_lock(pthread_mutex_t *mtx);
+  pthread_mutex_lock(&mtx);
   vector<int>found_users;
   // for each element in the search user prop 
   for (int j = 0; j < search_users.size(); j++)
@@ -74,13 +76,13 @@ vector<int> get_users(vector<int>search_users)
       }
     }
   }
-  int pthread_mutex_unlock(pthread_mutex_t *mtx);
+  pthread_mutex_unlock(&mtx);
   return found_users;
 }
 
 void change_state(int id, int status)
 {
-  int pthread_mutex_lock(pthread_mutex_t *mtx);
+  pthread_mutex_lock(&mtx);
   for (int i = 0; i < registered_users.size(); i++)
   {
     if (registered_users[i]["id"] == id)
@@ -89,12 +91,12 @@ void change_state(int id, int status)
       registered_users[i]["status"] = status;
     }
   }
-  int pthread_mutex_unlock(pthread_mutex_t *mtx);
+  pthread_mutex_unlock(&mtx);
 }
 
 void delete_user(int id)
 {
-  int pthread_mutex_lock(pthread_mutex_t *mtx);
+  pthread_mutex_lock(&mtx);
   for (int i = 0; i < registered_users.size(); i++)
   {
     if (registered_users[i]["id"] == id)
@@ -103,7 +105,16 @@ void delete_user(int id)
       registered_users.erase(i);
     }
   }
-  int pthread_mutex_unlock(pthread_mutex_t *mtx);
+  pthread_mutex_unlock(&mtx);
+}
+
+void *user_request_manager(void *user_id) 
+{
+  // while((readBuff = read(cli->fd, buff, sizeof(buff)-1)) > 0)
+  long u_id;
+  u_id = (long)user_id;
+  cout << u_id << endl;
+  pthread_exit(NULL);
 }
 
 int main(int argc, char const * argv[]){
@@ -171,18 +182,31 @@ int main(int argc, char const * argv[]){
       char *funciona = "Conectado";
       write(new_socket , funciona , strlen(funciona)); 
       int pid; 
-      if ((pid  = fork()) == 0){
-        // Si hay mensajes, imprimirlos
-        while(read(new_socket, buffer, 1024)> 0){
-          printf("Mensaje recibido \n%s\n", buffer);
-          std::fill_n(buffer, 1024, 0);
 
-          // aca en buffer recibo el string que convierto en json
+      // create a new json for the newly subscribed user
+      json user;
+      user["id"] = users_id++;
+      user["username"] = "Pepega";
+      user["status"] = 0;
+      user["last_connected"] = "TIME_HERE";
+      user["file_descriptor"] = new_socket;
+
+      append_user(user);
+
+      // lanzar un user request manager thread  
+      pthread_t thread;
+      pthread_create(&thread, NULL, &user_request_manager, (void *) users_id);
+
+      // if ((pid  = fork()) == 0){
+      //   // Si hay mensajes, imprimirlos
+      //   while(read(new_socket, buffer, 1024)> 0){
+      //     printf("Mensaje recibido \n%s\n", buffer);
+      //     std::fill_n(buffer, 1024, 0);
+
+      //     // aca en buffer recibo el string que convierto en json
           
-
-
-        }
-      }
+      //   }
+      // }
     }
     return 0;
 }
