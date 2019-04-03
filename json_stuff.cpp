@@ -14,8 +14,6 @@ json connect(string usuario){
   json conexion;
   conexion["code"] = 0;
   conexion["data"]["username"] = usuario;
-  //char resp[1024];
-  //strcpy(resp, conexion.dump().c_str());
   return conexion;
 }
 
@@ -81,11 +79,21 @@ void codeHandler(json envio){
       break;
     
     // Usuario Recibido
-    case 203:
+    case 203:{
       printf("User Recieved");
+      json recibidos = json::array();
+      json recibidos = envio["data"]["users"];
+      int i = 0;
+      for (i; i <= (int)sizeof(recibidos)/sizeof(recibidos[0]); i++){
+        printf("%s", recibidos[i]["username"]);
+        printf("  %s\n", recibidos[i]["id"]);
+      }
       break;
+    }
+      
   
     default:
+      printf("Respuesta Default");
       break;
   }
 }
