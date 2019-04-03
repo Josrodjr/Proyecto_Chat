@@ -5,15 +5,24 @@
 #include <netinet/in.h> 
 #include <arpa/inet.h>
 #include <string.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
 #include <iostream>
 // Probar para JSON
-#include "json.hpp"
+#include <nlohmann/json.hpp> 
 #include "json_stuff.cpp"
 // Definiciones
 #define PORT 8080 
+
+void *recibir(void *sock){
+  char leer[1024];
+  while(1){
+    read(*(int*)sock, leer, 1024);
+    printf("Mensaje recibido \n%s\n", leer);
+    std::fill_n(leer, 1024, 0);
+  }
+  return NULL;
+}
 
 int main (int argc, char const *argv[]){
     struct sockaddr_in address; 
@@ -23,6 +32,7 @@ int main (int argc, char const *argv[]){
     char message[1024] = {0};
     char send[1024] = {0};
     bool conectado = 0;
+    pthread_t listen;
 
     int sock = 0;
     sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -45,14 +55,15 @@ int main (int argc, char const *argv[]){
       fgets(message, 1024, stdin);
       strcpy(send, connect(message).dump().c_str());
       write(sock, send, strlen(send));
-      value = read(sock, buffer, 1024);
-      printf("%s\n", buffer);
+
 
       std::fill_n(message, 1024, 0);
       std::fill_n(buffer, 1024, 0);
       std::fill_n(send, 1024, 0);
 
-      while (1){      
+      if (pthread_create(&listen, NULL, recibir, &sock))
+
+      while (1){
         printf("Ingrese un mensaje pls \n");
         fgets(message, 1024, stdin);
         strcpy(send, envMensaje(message).dump().c_str());
@@ -60,12 +71,9 @@ int main (int argc, char const *argv[]){
         write(sock , send , strlen(send));
         std::fill_n(message, 1024, 0);
         std::fill_n(send, 1024, 0);
-        /*
-        while(value > 0){
-          printf("Mensaje recibido \n%s\n", buffer);
-          std::fill_n(buffer, 1024, 0);
-        }*/
       }
+
+      pthread_join(listen, NULL);
     }
     return 0;
 }
