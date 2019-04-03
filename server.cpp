@@ -125,6 +125,25 @@ void *user_request_manager(void *user_id)
   cout << registered_users[real_userid] << endl;
   // read del cliente
   char buffer[1024] = ""; 
+
+  read(registered_users[real_userid]["file_descriptor"], buffer, 1024);
+  cout << "Se encontro" << buffer << endl;
+
+  // echarle el jsonify
+  json info = json::parse(buffer);
+
+  json succ;
+  succ["code"] = 200;
+  succ["data"]["user"]["id"] = real_userid;
+  // Change the name of the generic Pepega User
+  succ["data"]["user"]["username"] = info["data"]["username"];
+  succ["data"]["user"]["status"] = 0;
+
+  // cout << info["data"]["username"] << endl;
+  rename_user(real_userid, info["data"]["username"]);
+  // return success to client
+  write(registered_users[real_userid]["file_descriptor"], succ.dump().c_str(), succ.dump().length());
+
   while (1){
     read(registered_users[real_userid]["file_descriptor"], buffer, 1024);
     cout << "Se encontro" << buffer << endl;
@@ -133,19 +152,13 @@ void *user_request_manager(void *user_id)
     json info = json::parse(buffer);
     // se supone trae un code y un data
     // GENERIC return sucess to the client
-    json succ;
-    succ["code"] = 200;
-    succ["data"]["user"]["id"] = real_userid;
-    // Change the name of the generic Pepega User
-    succ["data"]["user"]["username"] = info["data"]["username"];
-    succ["data"]["user"]["status"] = 0;
 
     if (info["code"] == 0)
     {
       // cout << info["data"]["username"] << endl;
-      rename_user(real_userid, info["data"]["username"]);
-      // return success to client
-      write(registered_users[real_userid]["file_descriptor"], succ.dump().c_str(), succ.dump().length());
+      // rename_user(real_userid, info["data"]["username"]);
+      // // return success to client
+      // write(registered_users[real_userid]["file_descriptor"], succ.dump().c_str(), succ.dump().length());
     }
     if (info["code"] == 1)
     {

@@ -3,6 +3,7 @@
 #include <string>
 #include <stdlib.h>
 #include <iostream>
+#include <vector>
 
 using json = nlohmann::json;
 using namespace std;
@@ -20,9 +21,11 @@ json connect(string usuario){
 
 // Agregar lista de ids
 json envMensaje(string contenido, string usuarios){
-  json mensaje;
+  json mensaje, to;
+  vector<int>usuarios_vector;
+  to.push_back(usuarios_vector);
   mensaje["code"] = 1;
-  mensaje["data"]["to"] = "";
+  mensaje["data"]["to"] = to;
   mensaje["data"]["message"] = contenido;
   return mensaje;
 }
