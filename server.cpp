@@ -127,70 +127,70 @@ void *user_request_manager(void *user_id)
   char buffer[1024] = ""; 
   while (1){
     read(registered_users[real_userid]["file_descriptor"], buffer, 1024);
-  cout << "Se encontro" << buffer << endl;
+    cout << "Se encontro" << buffer << endl;
 
-  // echarle el jsonify
-  json info = json::parse(buffer);
-  // se supone trae un code y un data
-  // GENERIC return sucess to the client
-  json succ;
-  succ["code"] = 200;
-  succ["data"]["user"]["id"] = real_userid;
-  // Change the name of the generic Pepega User
-  succ["data"]["user"]["username"] = info["data"]["username"];
-  succ["data"]["user"]["status"] = 0;
+    // echarle el jsonify
+    json info = json::parse(buffer);
+    // se supone trae un code y un data
+    // GENERIC return sucess to the client
+    json succ;
+    succ["code"] = 200;
+    succ["data"]["user"]["id"] = real_userid;
+    // Change the name of the generic Pepega User
+    succ["data"]["user"]["username"] = info["data"]["username"];
+    succ["data"]["user"]["status"] = 0;
 
-  if (info["code"] == 0)
-  {
-    // cout << info["data"]["username"] << endl;
-    rename_user(real_userid, info["data"]["username"]);
-    // return success to client
-    write(registered_users[real_userid]["file_descriptor"], succ.dump().c_str(), succ.dump().length());
-  }
-  if (info["code"] == 1)
-  {
-    // create a geneeric message we'll send to EVERYONE
-    json message;
-    message["code"] = 201;
-    message["data"]["from"] = registered_users[real_userid]["username"];
-    message["data"]["message"] = info["data"]["message"]; 
-    // transform the destinataries into a vector of integers
-    vector<int> destinatarios = info["data"]["to"];
-    for(int i=0; i<destinatarios.size(); i++)
+    if (info["code"] == 0)
     {
-      write(registered_users[destinatarios[i]]["file_descriptor"], message.dump().c_str(), message.dump().length());
+      // cout << info["data"]["username"] << endl;
+      rename_user(real_userid, info["data"]["username"]);
+      // return success to client
+      write(registered_users[real_userid]["file_descriptor"], succ.dump().c_str(), succ.dump().length());
     }
-    // return success to client
-    write(registered_users[real_userid]["file_descriptor"], succ.dump().c_str(), succ.dump().length());
-  }
-  if (info["code"] == 3)
-  {
-    // transform the list provided to an actual list
-    vector<int> maybe_existing_users = info["data"]["user"];
-    vector<int> real_users = get_users(maybe_existing_users);
-    // return the users to the client
-    json answer;
-    answer["code"] = 203;
-    answer["data"]["users"] = real_users;
-    write(registered_users[real_userid]["file_descriptor"], answer.dump().c_str(), answer.dump().length());
-  }
-  if (info["code"] == 4)
-  {
-    // Change user status
-    // change the id doing the nnew params
-    change_state(info["data"]["id"], info["data"]["new_status"]);
-    // return sucess?
-    json success;
-    success["code"] = 204;
-    success["data"] = {};
-    write(registered_users[real_userid]["file_descriptor"], success.dump().c_str(), success.dump().length());
-  }
-  if (info["code"] == 5)
-  {
-    delete_user(real_userid);
-    pthread_exit(NULL);
-  }
-  std::fill_n(buffer, 1024, 0);
+    if (info["code"] == 1)
+    {
+      // create a geneeric message we'll send to EVERYONE
+      json message;
+      message["code"] = 201;
+      message["data"]["from"] = registered_users[real_userid]["username"];
+      message["data"]["message"] = info["data"]["message"]; 
+      // transform the destinataries into a vector of integers
+      vector<int> destinatarios = info["data"]["to"];
+      for(int i=0; i<destinatarios.size(); i++)
+      {
+        write(registered_users[destinatarios[i]]["file_descriptor"], message.dump().c_str(), message.dump().length());
+      }
+      // return success to client
+      write(registered_users[real_userid]["file_descriptor"], succ.dump().c_str(), succ.dump().length());
+    }
+    if (info["code"] == 3)
+    {
+      // transform the list provided to an actual list
+      vector<int> maybe_existing_users = info["data"]["user"];
+      vector<int> real_users = get_users(maybe_existing_users);
+      // return the users to the client
+      json answer;
+      answer["code"] = 203;
+      answer["data"]["users"] = real_users;
+      write(registered_users[real_userid]["file_descriptor"], answer.dump().c_str(), answer.dump().length());
+    }
+    if (info["code"] == 4)
+    {
+      // Change user status
+      // change the id doing the nnew params
+      change_state(info["data"]["id"], info["data"]["new_status"]);
+      // return sucess?
+      json success;
+      success["code"] = 204;
+      success["data"] = {};
+      write(registered_users[real_userid]["file_descriptor"], success.dump().c_str(), success.dump().length());
+    }
+    if (info["code"] == 5)
+    {
+      delete_user(real_userid);
+      pthread_exit(NULL);
+    }
+    std::fill_n(buffer, 1024, 0);
   }
   
 
