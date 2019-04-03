@@ -10,6 +10,7 @@
 #include "json.hpp"
 #include <iostream>
 #include <vector>
+
 // Definitions
 #define PORT 8080
 // Que implemetacion de json estamos usando
@@ -19,23 +20,31 @@ using namespace std;
 // create an array of users GLOBAL SCOPE
 json registered_users = json::array();
 
+// get a mutex for the registered users
+pthread_mutex_t mtx;
+
 void show_users()
 {
   // print everything in the array of users
+  int pthread_mutex_lock(pthread_mutex_t *mtx);
   for (int i = 0; i < registered_users.size(); i++) 
   {
     std::cout << registered_users[i] << endl;
   }
+  int pthread_mutex_unlock(pthread_mutex_t *mtx);
 }
 
 void append_user(json user)
 {
   // append the new user
+  int pthread_mutex_lock(pthread_mutex_t *mtx);
   registered_users.push_back(user);
+  int pthread_mutex_unlock(pthread_mutex_t *mtx);
 }
 
 int get_user(int search_id)
 {
+  int pthread_mutex_lock(pthread_mutex_t *mtx);
   for (int i = 0; i < registered_users.size(); i++)
   {
     if (registered_users[i]["id"] == search_id)
@@ -43,13 +52,14 @@ int get_user(int search_id)
       return registered_users[i]["id"];
     }
   }
+  int pthread_mutex_unlock(pthread_mutex_t *mtx);
   // Not found
   return 0;
 }
 
 vector<int> get_users(vector<int>search_users)
 {
-
+  int pthread_mutex_lock(pthread_mutex_t *mtx);
   vector<int>found_users;
   // for each element in the search user prop 
   for (int j = 0; j < search_users.size(); j++)
@@ -64,7 +74,36 @@ vector<int> get_users(vector<int>search_users)
       }
     }
   }
+  int pthread_mutex_unlock(pthread_mutex_t *mtx);
   return found_users;
+}
+
+void change_state(int id, int status)
+{
+  int pthread_mutex_lock(pthread_mutex_t *mtx);
+  for (int i = 0; i < registered_users.size(); i++)
+  {
+    if (registered_users[i]["id"] == id)
+    {
+      // change the found value
+      registered_users[i]["status"] = status;
+    }
+  }
+  int pthread_mutex_unlock(pthread_mutex_t *mtx);
+}
+
+void delete_user(int id)
+{
+  int pthread_mutex_lock(pthread_mutex_t *mtx);
+  for (int i = 0; i < registered_users.size(); i++)
+  {
+    if (registered_users[i]["id"] == id)
+    {
+      // change the found value
+      registered_users.erase(i);
+    }
+  }
+  int pthread_mutex_unlock(pthread_mutex_t *mtx);
 }
 
 int main(int argc, char const * argv[]){
@@ -89,19 +128,18 @@ int main(int argc, char const * argv[]){
 
     show_users();
 
-    vector<int> test;
-    test.push_back(999);
-    test.push_back(998);
-
-    // cout << test[0] << test[1] << endl;
-
-    vector<int> result = get_users(test);
+    // vector<int> test;
+    // test.push_back(999);
+    // test.push_back(998);
+    // vector<int> result = get_users(test);
     // cout << user_ids[0] << endl;
-    for(int i=0; i<result.size(); i++)
-    {
-      cout << result[i] << endl;
-    }
-    // std::cout << user["username"] << endl;
+    // for(int i=0; i<result.size(); i++)
+    // {
+    //   cout << result[i] << endl;
+    // }
+
+    delete_user(999);
+    show_users();
 
     int server_file_descriptor, new_socket, value; 
     struct sockaddr_in address; 
@@ -138,6 +176,11 @@ int main(int argc, char const * argv[]){
         while(read(new_socket, buffer, 1024)> 0){
           printf("Mensaje recibido \n%s\n", buffer);
           std::fill_n(buffer, 1024, 0);
+
+          // aca en buffer recibo el string que convierto en json
+          
+
+
         }
       }
     }
