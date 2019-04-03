@@ -23,7 +23,7 @@ void *recibir(void *sock){
     read(*(int*)sock, leer, 1024);
     printf("Mensaje recibido \n%s\n", leer);
     recibido = json::parse(leer);
-    printf("s%\n", recibido["code"]);
+    printf("%s\n", recibido["code"]);
     codeHandler(recibido);
     std::fill_n(leer, 1024, 0);
   }
@@ -103,7 +103,7 @@ int main (int argc, char const *argv[]){
               printf("6. AIUDA\n");
               printf("7. Salir\n");
               printf("Ingrese su opcion\n");
-              scanf("%d", &menu);
+              cin >> menu;
               break;
 
             case 1: 
@@ -115,7 +115,7 @@ int main (int argc, char const *argv[]){
                 menu = 0;
               }
               strcpy(send, envMensaje(message, "").dump().c_str());
-              //cout << send << endl;
+              cout << send << endl;
               write(sock , send , strlen(send));
               std::fill_n(message, 1024, 0);
               std::fill_n(send, 1024, 0);

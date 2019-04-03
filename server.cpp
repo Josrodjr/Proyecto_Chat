@@ -59,6 +59,22 @@ int get_user(int search_id)
   return 0;
 }
 
+
+int get_file_descriptor(int search_id)
+{
+  pthread_mutex_lock(&mtx);
+  for (int i = 0; i < registered_users.size(); i++)
+  {
+    if (registered_users[i]["id"] == search_id)
+    {
+      return registered_users[i]["file_descriptor"];
+    }
+  }
+  pthread_mutex_unlock(&mtx);
+  // Not found
+  return 0;
+}
+
 vector<int> get_users(vector<int>search_users)
 {
   pthread_mutex_lock(&mtx);
@@ -142,9 +158,11 @@ void *user_request_manager(void *user_id)
   // cout << info["data"]["username"] << endl;
   rename_user(real_userid, info["data"]["username"]);
   // return success to client
+
   write(registered_users[real_userid]["file_descriptor"], succ.dump().c_str(), succ.dump().length());
 
   while (1){
+    std::fill_n(buffer, 1024, 0);
     read(registered_users[real_userid]["file_descriptor"], buffer, 1024);
     cout << "Se encontro" << buffer << endl;
 
@@ -169,38 +187,58 @@ void *user_request_manager(void *user_id)
       message["data"]["message"] = info["data"]["message"]; 
       // transform the destinataries into a vector of integers
       vector<int> destinatarios = info["data"]["to"];
-      for(int i=0; i<destinatarios.size(); i++)
+      vector<int> real_dest = get_users(destinatarios);
+
+      // cout << real_dest[0] << endl;
+      // cout << destinatarios << endl;
+      for(int i=0; i<real_dest.size(); i++)
       {
-        write(registered_users[destinatarios[i]]["file_descriptor"], message.dump().c_str(), message.dump().length());
+        // cout << destinatarios[i] << endl;
+        // write(registered_users[destinatarios[i]]["file_descriptor"], message.dump().c_str(), message.dump().length());
+        // write(registered_users[real_dest[i]]["file_descriptor"], message.dump().c_str(), message.dump().length());
+        if (real_userid != real_dest[i])
+        {
+          write(registered_users[real_dest[i]]["file_descriptor"], message.dump().c_str(), message.dump().length());
+        }
       }
       // return success to client
-      write(registered_users[real_userid]["file_descriptor"], succ.dump().c_str(), succ.dump().length());
+      json ree;
+      ree["code"] = 201;
+      ree["message"] = "You did it!, You crazy son of a **** did it!";
+      write(registered_users[real_userid]["file_descriptor"], ree.dump().c_str(), ree.dump().length());
     }
     if (info["code"] == 3)
     {
+      // create a json array for the users that are actually on the db
+      json registered_users = json::array();
       // transform the list provided to an actual list
       vector<int> maybe_existing_users = info["data"]["user"];
       vector<int> real_users = get_users(maybe_existing_users);
       // return the users to the client
+      // cout << real_users << endl;
       json answer;
       answer["code"] = 203;
-      answer["data"]["users"] = real_users;
+      answer["data"]["users"] = "ayy lmao";
       write(registered_users[real_userid]["file_descriptor"], answer.dump().c_str(), answer.dump().length());
     }
     if (info["code"] == 4)
     {
       // Change user status
       // change the id doing the nnew params
-      change_state(info["data"]["id"], info["data"]["new_status"]);
+      change_state(info["data"]["user"], info["data"]["new_status"]);
       // return sucess?
       json success;
       success["code"] = 204;
-      success["data"] = {};
+      success["data"] = "funciono";
       write(registered_users[real_userid]["file_descriptor"], success.dump().c_str(), success.dump().length());
+      cout << registered_users[real_userid] << endl;
     }
     if (info["code"] == 5)
     {
-      delete_user(real_userid);
+      json success;
+      success["code"] = 205;
+      write(registered_users[real_userid]["file_descriptor"], success.dump().c_str(), success.dump().length());
+      // delete_user(real_userid);
       pthread_exit(NULL);
     }
     std::fill_n(buffer, 1024, 0);

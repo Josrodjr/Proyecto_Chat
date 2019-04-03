@@ -21,11 +21,12 @@ json connect(string usuario){
 
 // Agregar lista de ids
 json envMensaje(string contenido, string usuarios){
-  json mensaje, to;
+  json mensaje;
   vector<int>usuarios_vector;
-  to.push_back(usuarios_vector);
+  // usuarios_vector.push_back(0);
+  // to.push_back(usuarios_vector);
   mensaje["code"] = 1;
-  mensaje["data"]["to"] = to;
+  mensaje["data"]["to"] = usuarios_vector;
   mensaje["data"]["message"] = contenido;
   return mensaje;
 }
@@ -65,13 +66,13 @@ void codeHandler(json envio){
     
     // Errores
     case 500:
-      printf("s%", envio["data"]["error_message"]);
+      printf("%s", envio["data"]["error_message"]);
       break;
     
     // Mensaje recibido 
     case 201:
-      printf("s%:\n", envio["data"]["from"]);
-      printf("s%\n", envio["data"]["message"]);
+      printf("%s:\n", envio["data"]["from"]);
+      printf("%s\n", envio["data"]["message"]);
       break;
 
     // Exito de Cambio de estado
