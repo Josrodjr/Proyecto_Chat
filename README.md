@@ -1,25 +1,32 @@
-### Proyecto Chat
+## Proyecto Chat
 
-## Utilizacion
+### Utilizacion
 Server
+
 ```
 g++ -o server server.cpp -lpthread
-./server
+./server <puerto>
 ```
 En otra consola o dispositivo (Cliente)
 ```
 g++ -o client client.cpp -lpthread
-./client <USERNAME>
+./client <usuario> <IP> <puerto>
 ```
 
-## Cliente
+Ejemplo de utilizacion
+```
+./server 7070
+./client 127.0.0.1 7070
+```
+
+### Cliente
 
 - [x] Chateo con usuarios
 - [x] Chateo Privado con multithreading y multiprocessing (se uso PTHREADS)
 - [x] Cambio de status
 - [x] Listado de usuarios e informacion de usuarios (De todos, query with params nonresponsive)
 
-## Server
+### Server
 
 - [x] Atencion con multithreading (PTHREADS revisar funcion User_request_manager)
 - [x] Broadcasting y mensajes directos
@@ -34,9 +41,9 @@ instalacion con apt
 sudo apt-get install nlohmann-json-dev
 ```
 
-### Protocolo
+## Protocolo
 
-## Status = (0: active, 1: busy, 2: inactive)
+### Status = (0: active, 1: busy, 2: inactive)
 ```
 user:{
  id: number,
@@ -46,7 +53,7 @@ user:{
 }
 ```
 
-## Request connection
+### Request connection
 ```
 {
  code: 0,
@@ -56,7 +63,7 @@ user:{
 }
 ```
 
-## SUCCESS
+### SUCCESS
 ```
 {
  code: 200,
@@ -70,7 +77,7 @@ user:{
 }
 ```
 
-## ERROR
+### ERROR
 ```
 {
  code: 500,
@@ -80,7 +87,7 @@ user:{
 }
 ```
 
-## Send message
+### Send message
 ```
 {
  code: 1,
@@ -92,7 +99,7 @@ user:{
 }
 ```
 
-## Receive message
+### Receive message
 ```
 {
  code: 201,
@@ -103,7 +110,7 @@ user:{
 }
 ```
 
-## GET user
+### GET user
 ```
 {
  code: 3,
@@ -113,7 +120,7 @@ user:{
 }
 ```
 
-## Recieve user
+### Recieve user
 ```
 {
  code: 203,
@@ -123,7 +130,7 @@ user:{
 }
 ```
 
-## Change status
+### Change status
 ```
 {
  code: 4,
@@ -134,14 +141,14 @@ user:{
 }
 ```
 
-## Change status success
+### Change status success
 ```
 {
  code: 204,
  data: {},
 }
 ```
-## Goodbye 
+### Goodbye 
 ```
 {
  code: 5,

@@ -301,7 +301,7 @@ int main(int argc, char const * argv[]){
     // Agregar al struct parametros
     address.sin_family = AF_INET; 
     address.sin_addr.s_addr = INADDR_ANY; 
-    address.sin_port = htons( PORT ); 
+    address.sin_port = htons((unsigned short)strtoul(argv[1], NULL, 0));
 
     // Agregar el socket al nuevo puerto numerado
     bind(server_file_descriptor, (struct sockaddr *) &address, sizeof(address));
