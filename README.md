@@ -1,6 +1,34 @@
-Proyecto_Chat
+### Proyecto Chat
 
-### Status = (0: active, 1: busy, 2: inactive)
+## Utilizacion
+Server
+```
+g++ -o server server.cpp -lpthread
+./server
+```
+En otra consola o dispositivo (Cliente)
+```
+g++ -o client client.cpp -lpthread
+./client <USERNAME>
+```
+
+## Cliente
+
+- [x] Chateo con usuarios
+- [x] Chateo Privado con multithreading y multiprocessing (se uso PTHREADS)
+- [x] Cambio de status
+- [ ] Listado de usuarios e informacion de usuarios (sin probar)
+
+## Server
+
+- [x] Atencion con multithreading (PTHREADS revisar funcion User_request_manager)
+- [x] Broadcasting y mensajes directos
+- [x] Registro de usuarios
+- [ ] Liberacion de usuarios
+- [x] Manejo de status
+- [x] Respuesta a solicitud de usuarios
+
+## Status = (0: active, 1: busy, 2: inactive)
 ```
 user:{
  id: number,
@@ -10,7 +38,7 @@ user:{
 }
 ```
 
-### Request connection
+## Request connection
 ```
 {
  code: 0,
@@ -20,7 +48,7 @@ user:{
 }
 ```
 
-### SUCCESS
+## SUCCESS
 ```
 {
  code: 200,
@@ -34,7 +62,7 @@ user:{
 }
 ```
 
-### ERROR
+## ERROR
 ```
 {
  code: 500,
@@ -44,7 +72,7 @@ user:{
 }
 ```
 
-### Send message
+## Send message
 ```
 {
  code: 1,
@@ -56,7 +84,7 @@ user:{
 }
 ```
 
-### Receive message
+## Receive message
 ```
 {
  code: 201,
@@ -67,7 +95,7 @@ user:{
 }
 ```
 
-### GET user
+## GET user
 ```
 {
  code: 3,
@@ -77,7 +105,7 @@ user:{
 }
 ```
 
-### Recieve user
+## Recieve user
 ```
 {
  code: 203,
@@ -87,7 +115,7 @@ user:{
 }
 ```
 
-### Change status
+## Change status
 ```
 {
  code: 4,
@@ -98,18 +126,17 @@ user:{
 }
 ```
 
-### Change status success
+## Change status success
 ```
 {
  code: 204,
  data: {},
 }
 ```
-### Goodbye (va a ser later bitch.)
-
-mis notas
+## Goodbye 
 ```
-cd mnt/c/Users/Josro/Documents/GitHub/Proyecto_Chat
-g++ -o server server.cpp
-sudo apt install nlohmann-json-dev
+{
+ code: 5,
+ data: {},
+}
 ```
