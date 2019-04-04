@@ -229,15 +229,33 @@ void *user_request_manager(void *user_id)
     if (info["code"] == 3)
     {
       // create a json array for the users that are actually on the db
-      json registered_users = json::array();
+      json registered_users_subset = json::array();
       // transform the list provided to an actual list
       vector<int> maybe_existing_users = info["data"]["user"];
       vector<int> real_users = get_users(maybe_existing_users);
+
+      // for each element in the search user prop 
+      for (int j = 0; j < real_users.size(); j++)
+      {
+        // for each element in the registered users DB array
+        for (int i = 0; i < registered_users.size(); i++)
+        {
+          if (registered_users[i]["id"] == real_users[j])
+          {
+            // append the found values
+            registered_users_subset.push_back(registered_users[i]);
+          }
+        }
+      }
+
+      if (maybe_existing_users.size() == 0)
+      {
+        registered_users_subset = registered_users;
+      }
       // return the users to the client
-      // cout << real_users << endl;
       json answer;
       answer["code"] = 203;
-      answer["data"]["users"] = "ayy lmao";
+      answer["data"]["users"] = registered_users_subset;
       write(registered_users[real_userid]["file_descriptor"], answer.dump().c_str(), answer.dump().length());
     }
     if (info["code"] == 4)
@@ -250,7 +268,7 @@ void *user_request_manager(void *user_id)
       success["code"] = 204;
       success["data"] = "funciono";
       write(registered_users[real_userid]["file_descriptor"], success.dump().c_str(), success.dump().length());
-      cout << registered_users[real_userid] << endl;
+      // cout << registered_users[real_userid] << endl;
     }
     if (info["code"] == 5)
     {
