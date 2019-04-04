@@ -17,7 +17,7 @@ g++ -o client client.cpp -lpthread
 - [x] Chateo con usuarios
 - [x] Chateo Privado con multithreading y multiprocessing (se uso PTHREADS)
 - [x] Cambio de status
-- [ ] Listado de usuarios e informacion de usuarios (sin probar)
+- [x] Listado de usuarios e informacion de usuarios (De todos, query with params nonresponsive)
 
 ## Server
 
@@ -27,6 +27,14 @@ g++ -o client client.cpp -lpthread
 - [ ] Liberacion de usuarios
 - [x] Manejo de status
 - [x] Respuesta a solicitud de usuarios
+
+*nota: Usando nlohmann para manejo de los jsons*
+instalacion con apt
+```
+sudo apt-get install nlohmann-json-dev
+```
+
+### Protocolo
 
 ## Status = (0: active, 1: busy, 2: inactive)
 ```

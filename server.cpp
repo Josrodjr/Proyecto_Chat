@@ -268,7 +268,7 @@ void *user_request_manager(void *user_id)
       success["code"] = 204;
       success["data"] = "funciono";
       write(registered_users[real_userid]["file_descriptor"], success.dump().c_str(), success.dump().length());
-      // cout << registered_users[real_userid] << endl;
+      cout << registered_users[real_userid] << endl;
     }
     if (info["code"] == 5)
     {
