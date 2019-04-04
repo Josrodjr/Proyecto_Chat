@@ -45,6 +45,7 @@ int main (int argc, char const *argv[]){
     char compare[1024] = "exit\n";
     int id;
     int estado;
+    int usuario;
     pthread_t listen;
 
     int sock = 0;
@@ -114,7 +115,7 @@ int main (int argc, char const *argv[]){
               if (strcmp(message, compare)==0){
                 menu = 0;
               }
-              strcpy(send, envMensaje(message, "").dump().c_str());
+              strcpy(send, envMensaje(message, -1).dump().c_str());
               cout << send << endl;
               write(sock , send , strlen(send));
               std::fill_n(message, 1024, 0);
@@ -145,13 +146,15 @@ int main (int argc, char const *argv[]){
             
             case 4:
               printf("Lista de Usuarios");
-              strcpy(send, getUser("").dump().c_str());
+              strcpy(send, getUser(-1).dump().c_str());
               write(sock, send, 1024);
               menu = 0;
               break;
             
             case 5:
               printf("Usuario Especifico");
+              printf("Ingrese el id del usuairo a buscar");
+              cin >> usuario;
               menu = 0;
               break;
 

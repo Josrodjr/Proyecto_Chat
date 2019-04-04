@@ -18,9 +18,12 @@ json connect(string usuario){
 }
 
 // Agregar lista de ids
-json envMensaje(string contenido, string usuarios){
+json envMensaje(string contenido, int usuario){
   json mensaje;
   vector<int>usuarios_vector;
+  if (usuario != -1){
+    usuarios_vector.push_back(usuario);
+  }
   // usuarios_vector.push_back(0);
   mensaje["code"] = 1;
   mensaje["data"]["to"] = usuarios_vector;
@@ -28,10 +31,14 @@ json envMensaje(string contenido, string usuarios){
   return mensaje;
 }
 
-json getUser(string usuarios){
+json getUser(int ids){
   json users;
+  vector<int>usuarios_vector;
+  if (ids != -1){
+    usuarios_vector.push_back(ids);
+  }
   users["code"] = 3;
-  users["data"]["user"] = usuarios;
+  users["data"]["user"] = usuarios_vector;
   return users;
 }
 
