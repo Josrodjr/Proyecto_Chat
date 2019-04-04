@@ -22,7 +22,6 @@ json envMensaje(string contenido, string usuarios){
   json mensaje;
   vector<int>usuarios_vector;
   // usuarios_vector.push_back(0);
-  // to.push_back(usuarios_vector);
   mensaje["code"] = 1;
   mensaje["data"]["to"] = usuarios_vector;
   mensaje["data"]["message"] = contenido;
@@ -54,8 +53,7 @@ json goodBye(){
 
 
 void codeHandler(json envio){
-  int codigo = envio["code"];
-  printf("%d \n", codigo);
+  long codigo = (long)envio["code"];
   switch (codigo){
     // Exito de Conexion
     case 200:
@@ -65,36 +63,42 @@ void codeHandler(json envio){
     // Errores
     case 500:
       printf("%s", envio["data"]["error_message"]);
+      fflush(stdout);
       break;
     
     // Mensaje recibido 
     case 201:
       printf("%s:\n", envio["data"]["from"]);
       printf("%s\n", envio["data"]["message"]);
+      fflush(stdout);
       break;
 
     // Exito de Cambio de estado
     case 204:
       printf("Cambio exitoso");
+      fflush(stdout);
       break;
     
     // Usuario Recibido
     case 203:{
       printf("User Recieved");
       json recibidos = json::array();
-      json recibidos = envio["data"]["users"];
+      recibidos = envio["data"]["users"];
       int i = 0;
       for (i; i <= (int)sizeof(recibidos)/sizeof(recibidos[0]); i++){
         printf("%s", recibidos[i]["username"]);
+        fflush(stdout);
         printf("  %s\n", recibidos[i]["id"]);
+        fflush(stdout);
       }
+      fflush(stdout);
       break;
     }
       
   
     default:
       printf("Respuesta Default");
-      break;
+      fflush(stdout);
   }
 }
 

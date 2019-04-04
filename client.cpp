@@ -22,8 +22,8 @@ void *recibir(void *sock){
   while(corriendo){
     read(*(int*)sock, leer, 1024);
     printf("Mensaje recibido \n%s\n", leer);
+    fflush(stdout);
     recibido = json::parse(leer);
-    printf("%s\n", recibido["code"]);
     codeHandler(recibido);
     std::fill_n(leer, 1024, 0);
   }
