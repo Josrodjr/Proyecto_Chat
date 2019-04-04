@@ -96,6 +96,20 @@ vector<int> get_users(vector<int>search_users)
   return found_users;
 }
 
+vector<int> get_all_users()
+{
+  pthread_mutex_lock(&mtx);
+  vector<int>found_users;
+  // for each element in the registered users DB array
+  for (int i = 0; i < registered_users.size(); i++)
+  {
+    // append the found values
+    found_users.push_back(registered_users[i]["id"]);
+  }
+  pthread_mutex_unlock(&mtx);
+  return found_users;
+}
+
 void change_state(int id, int status)
 {
   pthread_mutex_lock(&mtx);
@@ -189,11 +203,16 @@ void *user_request_manager(void *user_id)
       vector<int> destinatarios = info["data"]["to"];
       vector<int> real_dest = get_users(destinatarios);
 
+      if (destinatarios.size() == 0){
+        real_dest = get_all_users();
+      }
+
       // cout << real_dest[0] << endl;
       // cout << destinatarios << endl;
+
       for(int i=0; i<real_dest.size(); i++)
       {
-        // cout << destinatarios[i] << endl;
+        cout << real_dest[i] << endl;
         // write(registered_users[destinatarios[i]]["file_descriptor"], message.dump().c_str(), message.dump().length());
         // write(registered_users[real_dest[i]]["file_descriptor"], message.dump().c_str(), message.dump().length());
         if (real_userid != real_dest[i])
@@ -203,9 +222,9 @@ void *user_request_manager(void *user_id)
       }
       // return success to client
       json ree;
-      ree["code"] = 201;
+      ree["code"] = 200;
       ree["message"] = "You did it!, You crazy son of a **** did it!";
-      write(registered_users[real_userid]["file_descriptor"], ree.dump().c_str(), ree.dump().length());
+      // write(registered_users[real_userid]["file_descriptor"], ree.dump().c_str(), ree.dump().length());
     }
     if (info["code"] == 3)
     {
